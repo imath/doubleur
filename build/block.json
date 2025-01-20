@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/retraceur/ressources/refs/heads/main/schemas/block.json",
+  "apiVersion": 3,
+  "name": "imath/doubleur",
+  "title": "Dubber",
+  "category": "layout",
+  "icon": "translation",
+  "description": "Post authors can use this block to add a version of their text translated for each each available locale.",
+  "keywords": [
+    "Retraceur",
+    "translation",
+    "internationalization"
+  ],
+  "textdomain": "doubleur",
+  "version": "1.0.0",
+  "attributes": {
+    "languages": {
+      "type": "number"
+    }
+  },
+  "editorScript": "file:./index.js",
+  "script": "file:./view.js",
+  "editorStyle": "file:./index.css",
+  "viewStyle": [
+    "file:./style.css",
+    "doubleur-switcher"
+  ],
+  "render": "file:./render.php"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "doubleur",
+  "version": "1.0.0",
+  "description": "Post authors can use this block to add a version of their text translated for each each available locale.",
+  "main": "index.js",
+  "scripts": {
+    "build": "wp-scripts build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imath/doubleur.git"
+  },
+  "keywords": [
+    "Retraceur",
+    "translation",
+    "internationalization"
+  ],
+  "author": "imath",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imath/doubleur/issues"
+  },
+  "homepage": "https://github.com/imath/doubleur#readme"
+}
