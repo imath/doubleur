@@ -9,11 +9,7 @@
 	"keywords": [ "Retraceur", "translation", "internationalization" ],
 	"textdomain": "doubleur",
 	"version": "1.0.0",
-	"attributes": {
-		"languages": {
-			"type": "number"
-		}
-	},
+	"allowedBlocks": [ "imath/doublage" ],
 	"editorScript": "file:./index.js",
 	"script": "file:./view.js",
 	"editorStyle": "file:./index.css",
