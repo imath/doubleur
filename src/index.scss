@@ -1,0 +1,44 @@
+[data-type="imath/doubleur"] {
+
+	.block-editor-inner-blocks {
+		min-height: 50px;
+	}
+
+	&.is-selected,
+	&.has-child-selected {
+
+		.wp-block-imath-doublage {
+			outline-width: 3px;
+			outline-style: dashed;
+			outline-offset: 15px;
+			outline-color: rgba(145,151,162,.25);
+
+			&::after {
+				content:"";
+				display: block;
+				clear:both;
+				margin-bottom: 50px;
+			}
+		}
+	}
+
+	.wp-block-imath-doublage {
+		position: relative;
+		margin-bottom: 10px;
+
+		&::before {
+			position: absolute;
+			top: -25px;
+			left: -12px;
+			padding-top: 5px;
+		}
+
+		&.doubleur-lang-fr-fr::before {
+			content: "🇫🇷";
+		}
+
+		&.doubleur-lang-en-us::before {
+			content: "🇺🇸";
+		}
+	}
+}
