@@ -1,8 +1,18 @@
 /**
+ * The doubleur blocks.
+ *
+ * @author imath.
+ * @since  1.0.0
+ */
+
+/**
  * WP dependencies.
  */
 import { registerBlockType } from '@wordpress/blocks';
-import { useBlockProps } from '@wordpress/block-editor';
+import {
+	useBlockProps,
+	InnerBlocks,
+} from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 
@@ -12,6 +22,13 @@ import { useSelect } from '@wordpress/data';
 import './index.scss';
 import metadata from './block.json';
 
+/**
+ * Get a list of the site's available locales.
+ *
+ * @since 1.0.O
+ *
+ * @return {array} The list of available locales.
+ */
 const getAvailableLanguages = () => {
 	const languages = useSelect( ( select ) => {
 		const { doubleur } = select( 'core/editor' ).getEditorSettings();
@@ -21,14 +38,51 @@ const getAvailableLanguages = () => {
 	return languages;
 }
 
-registerBlockType( metadata, {
+// Register the locale container.
+registerBlockType( 'imath/doublage', {
+	apiVersion: 3,
+	title: __( 'Dubbing', 'doubleur' ),
+	description: __( 'Block used to contain a specific language content.', 'doubleur' ),
+	icon: 'admin-site-alt',
+	parent: [ 'imath/doubleur' ],
+	category: 'common',
 	attributes: {
-		languages: {
-			type: 'number',
-			default: 2,
+		language: {
+			type: 'string',
+			default: '',
 		},
 	},
-	edit: ( { attributes, setAttributes } ) => {
+	supports: {
+		html: false,
+		inserter: false,
+		renaming: false,
+		interactivity: false,
+	},
+	edit: ( { attributes } ) => {
+		const blockProps = useBlockProps( {
+			className: 'doubleur-lang-' + attributes.language,
+		} );
+
+		return (
+			<div { ...blockProps }>
+				<InnerBlocks templateLock={ false } />
+			</div>
+		)
+	},
+	save: () => {
+		const blockProps = useBlockProps.save();
+
+		return (
+			<div { ...blockProps }>
+				<InnerBlocks.Content />
+			</div>
+		);
+	}
+} );
+
+// Register the main doubleur block.
+registerBlockType( metadata, {
+	edit: () => {
 		const blockProps = useBlockProps();
 		const languages = getAvailableLanguages();
 
@@ -40,13 +94,28 @@ registerBlockType( metadata, {
 			);
 		}
 
+		// Locale containers are use as the Inner Blocks’ template.
+		let template = [];
+		languages.forEach( ( langue ) => {
+			template.push( [ 'imath/doublage', { language: langue.replace( '_', '-' ).toLowerCase() } ] );
+		} );
+
 		return (
-			<div { ...blockProps }>
-				<p>{ __( 'Edit block', 'doubleur' ) }</p>
-			</div>
+			<section { ...blockProps }>
+				<InnerBlocks
+					template={ template }
+					templateLock="all"
+				/>
+			</section>
 		);
 	},
-	save: ( { attributes } ) => {
-		return null;
+	save: () => {
+		const blockProps = useBlockProps.save();
+
+		return (
+			<section { ...blockProps }>
+				<InnerBlocks.Content />
+			</section>
+		);
 	},
 } );
