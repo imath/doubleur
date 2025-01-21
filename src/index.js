@@ -4,7 +4,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import domReady from '@wordpress/dom-ready';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -14,11 +13,12 @@ import './index.scss';
 import metadata from './block.json';
 
 const getAvailableLanguages = () => {
-	const editorSettings = useSelect( ( select ) => {
-		return select( 'core/editor' ).getEditorSettings();
+	const languages = useSelect( ( select ) => {
+		const { doubleur } = select( 'core/editor' ).getEditorSettings();
+		return doubleur;
 	}, [] );
 
-	return editorSettings;
+	return languages;
 }
 
 registerBlockType( metadata, {
@@ -30,8 +30,15 @@ registerBlockType( metadata, {
 	},
 	edit: ( { attributes, setAttributes } ) => {
 		const blockProps = useBlockProps();
+		const languages = getAvailableLanguages();
 
-		console.log( getAvailableLanguages() );
+		if ( ! languages ) {
+			return (
+				<div { ...blockProps }>
+					<p>{ __( 'This block is only available when editing a Post or a Page.', 'doubleur' ) }</p>
+				</div>
+			);
+		}
 
 		return (
 			<div { ...blockProps }>
@@ -39,14 +46,7 @@ registerBlockType( metadata, {
 			</div>
 		);
 	},
-	save:  ( { attributes } ) => {
+	save: ( { attributes } ) => {
 		return null;
 	},
 } );
-
-/**
- * Do something.
- *
- * @since 1.0.0
- */
-domReady( function() {} );
