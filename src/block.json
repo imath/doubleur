@@ -5,14 +5,13 @@
 	"title": "Dubber",
 	"category": "layout",
 	"icon": "translation",
-	"description": "Post authors can use this block to add a version of their text translated for each each available locale.",
+	"description": "Authors can use this block to dub the post or page content in english.",
 	"keywords": [ "Retraceur", "translation", "internationalization" ],
 	"textdomain": "doubleur",
 	"version": "1.0.0",
 	"allowedBlocks": [ "imath/doublage" ],
 	"editorScript": "file:./index.js",
-	"script": "file:./view.js",
 	"editorStyle": "file:./index.css",
-	"viewStyle": ["file:./style.css", "doubleur-switcher" ],
+	"viewStyle": "file:./style-index.css",
 	"render": "file:./render.php"
 }

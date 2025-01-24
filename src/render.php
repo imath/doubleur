@@ -4,7 +4,7 @@ if ( ! isset( $block->parsed_block['innerBlocks'] ) ) {
 	return;
 }
 
-$locale          = strtolower( str_replace( '_', '-', get_locale() ) );
+$locale          = strtolower( str_replace( '_', '-', doubleur_get_locale() ) );
 $dubbed_contents = $block->parsed_block['innerBlocks'];
 
 foreach ( $dubbed_contents as $dubbed_content ) {

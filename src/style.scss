@@ -1,0 +1,40 @@
+.doubleur-i18n-switcher {
+	width: 100%;
+	height: auto;
+	border-bottom: solid 1px #ddd;
+	padding: 0 !important;
+	margin-bottom: 1.5em !important;
+	text-align: right;
+
+	li {
+		list-style: none;
+		display: inline-block;
+		margin: 0 !important;
+
+		&:last-child {
+			margin-right: 0.5em !important;
+		}
+
+		a {
+			text-decoration: none !important;
+			box-shadow: none !important;
+			padding: 0.5em;
+			padding-bottom: 0.25em;
+			display: block;
+			margin-bottom: -1px;
+		}
+
+		&.current-locale a {
+			border: solid 1px #ddd;
+			border-bottom-color: #fff;
+		}
+
+		&.nav-fr_FR > a::before {
+			content: "🇫🇷";
+		}
+
+		&.nav-en_US > a::before {
+			content: "🇺🇸";
+		}
+	}
+}

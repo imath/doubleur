@@ -20,6 +20,7 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies.
  */
 import './index.scss';
+import './style.scss';
 import metadata from './block.json';
 
 /**
