@@ -1,0 +1,77 @@
+# Copyright (C) 2025 imath
+# This file is distributed under the MIT License.
+msgid ""
+msgstr ""
+"Project-Id-Version: Doubleur 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/imath/doubleur/issues\n"
+"Last-Translator: imath <contact@imathi.eu>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-01-24T21:24:37+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: doubleur\n"
+
+#. Plugin Name of the plugin
+#: doubleur.php
+msgid "Doubleur"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: doubleur.php
+msgid "https://github.com/imath/doubleur"
+msgstr ""
+
+#. Description of the plugin
+#: doubleur.php
+msgid "Authors can use this block to dub the post or page content in english."
+msgstr ""
+
+#. Author of the plugin
+#: doubleur.php
+msgid "imath"
+msgstr ""
+
+#. Author URI of the plugin
+#: doubleur.php
+msgid "https://imathi.eu"
+msgstr ""
+
+#: build/index.js:1
+msgid "Dubbing"
+msgstr ""
+
+#: build/index.js:1
+msgid "Block used to contain a specific language content."
+msgstr ""
+
+#: build/index.js:1
+msgid "This block is only available when editing a Post or a Page."
+msgstr ""
+
+#: build/block.json
+msgctxt "block title"
+msgid "Dubber"
+msgstr ""
+
+#: build/block.json
+msgctxt "block description"
+msgid "Authors can use this block to dub the post or page content in english."
+msgstr ""
+
+#: build/block.json
+msgctxt "block keyword"
+msgid "Retraceur"
+msgstr ""
+
+#: build/block.json
+msgctxt "block keyword"
+msgid "translation"
+msgstr ""
+
+#: build/block.json
+msgctxt "block keyword"
+msgid "internationalization"
+msgstr ""
