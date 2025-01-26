@@ -10,6 +10,7 @@
  * @retraceur-block
  * Plugin Name:        Doubleur
  * Plugin URI:         https://github.com/imath/doubleur
+ * Plugin Type:        block
  * Description:        Authors can use this block to dub the post or page content in english.
  * Version:            1.0.0
  * Author:             imath
