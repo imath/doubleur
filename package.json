@@ -1,7 +1,7 @@
 {
   "name": "doubleur",
   "version": "1.0.0",
-  "description": "Post authors can use this block to add a version of their text translated for each each available locale.",
+  "description": "A Retraceur Block to dub the post or page content in english.",
   "main": "index.js",
   "scripts": {
     "build": "wp-scripts build",

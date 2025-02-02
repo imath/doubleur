@@ -1,4 +1,16 @@
 <?php
+/**
+ * Doubleur renderer.
+ *
+ * @package Doubleur\build
+ *
+ * @since  1.0.0
+ */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( ! isset( $block->parsed_block['innerBlocks'] ) ) {
 	return;
