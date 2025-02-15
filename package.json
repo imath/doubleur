@@ -1,11 +1,11 @@
 {
   "name": "doubleur",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Retraceur Block to dub the post or page content in english.",
   "main": "index.js",
   "scripts": {
     "build": "wp-scripts build",
-    "pot": "wp i18n make-pot . i18n/doubleur.pot --include=\"doubleur.php,build\" --headers='{\"Report-Msgid-Bugs-To\": \"https://github.com/imath/doubleur/issues\", \"Last-Translator\": \"imath <contact@imathi.eu>\"}'"
+    "pot": "wp i18n make-pot . i18n/doubleur.pot --include=\"doubleur.php,build\" --headers='{\"Project-Id-Version\": \"Doubleur 1.1.0\", \"Report-Msgid-Bugs-To\": \"https://github.com/imath/doubleur/issues\", \"Last-Translator\": \"imath <contact@imathi.eu>\"}'"
   },
   "repository": {
     "type": "git",
