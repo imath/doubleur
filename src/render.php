@@ -29,6 +29,6 @@ foreach ( $dubbed_contents as $dubbed_content ) {
 			continue;
 		}
 
-		echo $inner_block['innerHTML'];
+		echo render_block( $inner_block );
 	}
 }
