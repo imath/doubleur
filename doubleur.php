@@ -15,8 +15,8 @@
  * Version:            1.2.0
  * Author:             imath
  * Author URI:         https://imathi.eu
- * Requires Retraceur: 1.0.0-beta1
- * Up to Retraceur:    1.0.0
+ * Requires Retraceur: 1.0.0
+ * Up to Retraceur:    2.0.0
  * Requires PHP:       5.6
  * Text Domain:        doubleur
  * License:            MIT License
