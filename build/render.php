@@ -16,6 +16,11 @@ if ( ! isset( $block->parsed_block['innerBlocks'] ) ) {
 	return;
 }
 
+// This instance only exists to provide a translated title: don't output it as content.
+if ( ! empty( $attributes['useAsTitleTranslation'] ) ) {
+	return;
+}
+
 $locale          = strtolower( str_replace( '_', '-', doubleur_get_locale() ) );
 $dubbed_contents = $block->parsed_block['innerBlocks'];
 

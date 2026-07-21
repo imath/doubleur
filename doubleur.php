@@ -12,11 +12,11 @@
  * Plugin URI:         https://github.com/imath/doubleur
  * Plugin Type:        block
  * Description:        Authors can use this block to dub the post or page content in english.
- * Version:            1.2.0
+ * Version:            1.3.0-alpha
  * Author:             imath
  * Author URI:         https://imathi.eu
  * Requires Retraceur: 1.0.0
- * Up to Retraceur:    2.0.0
+ * Up to Retraceur:    4.0.0
  * Requires PHP:       5.6
  * Text Domain:        doubleur
  * License:            MIT License
@@ -186,6 +186,8 @@ function doubleur_get_translated_link( $link = '', $locale = '' ) {
  * Filters the block editor settings to pass available languages to Post context.
  *
  * @since 1.0.0
+ * @since 1.3.0 Edit the doubleur setting to be an object containing supported locales
+ *              as well as current locale.
  *
  * @param array                   $editor_settings      Default editor settings.
  * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
@@ -193,7 +195,10 @@ function doubleur_get_translated_link( $link = '', $locale = '' ) {
  */
 function doubleur_block_editor_settings( $settings, $context ) {
 	if ( ! empty( $context->post ) ) {
-		$settings['doubleur'] = doubleur_get_languages();
+		$settings['doubleur'] = array(
+			'allLocales'    => doubleur_get_languages(),
+			'currentLocale' => strtolower( str_replace( '_', '-', get_locale() ) ),
+		);
 	}
 
 	return $settings;
@@ -254,3 +259,95 @@ function doubleur_render_language_switcher( $content = '' ) {
 	return $content;
 }
 add_filter( 'render_block_core/post-content', 'doubleur_render_language_switcher' );
+
+/**
+* Recursively looks for the imath/doubleur block used to translate the title.
+*
+* @since 1.3.0
+*
+* @param  array $blocks A list of parsed blocks (see `parse_blocks()`).
+* @return array|false   The parsed `imath/doubleur` block flagged as the title
+*                        translation, false if none was found.
+*/
+function doubleur_find_title_translation_block( $blocks ) {
+	foreach ( $blocks as $block ) {
+		if ( 'imath/doubleur' === $block['blockName'] && ! empty( $block['attrs']['useAsTitleTranslation'] ) ) {
+			return $block;
+		}
+
+		if ( ! empty( $block['innerBlocks'] ) ) {
+			$found = doubleur_find_title_translation_block( $block['innerBlocks'] );
+
+			if ( $found ) {
+				return $found;
+			}
+		}
+	}
+
+	return false;
+}
+
+/**
+ * On singular templates, filters the Post Title to use the translated title.
+ *
+ * The Post/Page Title field always contains the site's default locale title.
+ * When a `imath/doubleur` block is flagged with `useAsTitleTranslation`, its
+ * dubbed content matching the locale in use is used instead.
+ *
+ * @since 1.3.0
+ *
+ * @param  string $title              The Post/Page title.
+ * @param  array  $parsed_title_block The Post/Page ID.
+ * @return string                     The title to use for the current locale.
+ */
+function doubleur_render_the_translated_title( $title, $parsed_title_block = array() ) {
+	if ( is_singular() && has_block( 'imath/doubleur' )  ) {
+		$locale       = strtolower( str_replace( '_', '-', doubleur_get_locale() ) );
+		$site_locale  = strtolower( str_replace( '_', '-', get_locale() ) );
+
+		// The Post/Page title already contains the site's default locale title.
+		if ( $locale === $site_locale ) {
+			return $title;
+		}
+
+		$post                   = get_post();
+		$translated_title_block = doubleur_find_title_translation_block( parse_blocks( $post->post_content ) );
+
+		if ( ! $translated_title_block || empty( $translated_title_block['innerBlocks'] ) ) {
+			return $title;
+		}
+
+		foreach ( $translated_title_block['innerBlocks'] as $dubbed_content ) {
+			if ( ! isset( $dubbed_content['attrs']['language'] ) || $locale !== $dubbed_content['attrs']['language'] || empty( $dubbed_content['innerBlocks'] ) ) {
+				continue;
+			}
+
+			foreach ( $dubbed_content['innerBlocks'] as $inner_block ) {
+				if ( 'core/heading' !== $inner_block['blockName'] ) {
+					continue;
+				}
+
+				$translated_title = trim( wp_strip_all_tags( render_block( $inner_block ) ) );
+
+				if ( $translated_title ) {
+					if ( $parsed_title_block ) {
+						$tags = new WP_HTML_Tag_Processor( $title );
+
+						if ( $tags->next_tag() ) {
+							$tags->next_token();
+							$tags->set_modifiable_text( $translated_title );
+						}
+
+						$title = $tags->get_updated_html();
+					} else {
+						$title = $translated_title;
+					}
+				}
+			}
+		}
+	}
+
+	return $title;
+}
+add_filter( 'render_block_core/post-title', 'doubleur_render_the_translated_title', 10, 2 );
+add_filter( 'retraceur_opengraph_title', 'doubleur_render_the_translated_title' );
