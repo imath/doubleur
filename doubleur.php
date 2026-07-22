@@ -261,7 +261,7 @@ function doubleur_render_language_switcher( $content = '' ) {
 add_filter( 'render_block_core/post-content', 'doubleur_render_language_switcher' );
 
 /**
-* Recursively looks for the imath/doubleur block used to translate the title.
+* Recursively looks for the `imath/doubleur` block used to translate the title.
 *
 * @since 1.3.0
 *
