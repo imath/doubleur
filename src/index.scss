@@ -40,5 +40,9 @@
 		&.doubleur-lang-en-us::before {
 			content: "🇬🇧";
 		}
+
+		&.doubleur-title-translation-hidden {
+			display: none;
+		}
 	}
 }

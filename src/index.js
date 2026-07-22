@@ -8,13 +8,16 @@
 /**
  * WP dependencies.
  */
-import { registerBlockType } from '@wordpress/blocks';
+import { registerBlockType, createBlock } from '@wordpress/blocks';
 import {
 	useBlockProps,
 	InnerBlocks,
+	InspectorControls,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
+import { PanelBody, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies.
@@ -33,10 +36,51 @@ import metadata from './block.json';
 const getAvailableLanguages = () => {
 	const languages = useSelect( ( select ) => {
 		const { doubleur } = select( 'core/editor' ).getEditorSettings();
-		return doubleur;
+
+		return doubleur.allLocales || [];
 	}, [] );
 
 	return languages;
+}
+
+/**
+ * Get the site's default locale (used to tell apart the "original" dubbed
+ * content from its translations).
+ *
+ * @since 1.3.0
+ *
+ * @return {string} The site's default locale (eg. `fr-fr`).
+ */
+const useDefaultLocale = () => {
+	return useSelect( ( select ) => {
+		const { doubleur } = select( 'core/editor' ).getEditorSettings();
+
+		return doubleur.currentLocale || '';
+	}, [] );
+}
+
+/**
+ * Finds every other `imath/doubleur` block used inside the current post so
+ * that only one of them can ever be flagged as the title translation.
+ *
+ * @since 1.3.0
+ *
+ * @param {string} clientId The client ID of the `imath/doubleur` block being edited.
+ * @return {string[]} The client IDs of the other `imath/doubleur` blocks currently
+ *                     flagged as the title translation.
+ */
+const useOtherTitleTranslationBlocks = ( clientId ) => {
+	return useSelect( ( select ) => {
+		const { getClientIdsWithDescendants, getBlockName, getBlockAttributes } = select( 'core/block-editor' );
+
+		return getClientIdsWithDescendants().filter( ( id ) => {
+			return (
+				id !== clientId &&
+				getBlockName( id ) === 'imath/doubleur' &&
+				!! getBlockAttributes( id )?.useAsTitleTranslation
+			);
+		} );
+	}, [ clientId ] );
 }
 
 // Register the locale container.
@@ -53,20 +97,65 @@ registerBlockType( 'imath/doublage', {
 			default: '',
 		},
 	},
+	usesContext: [ 'doubleur/useAsTitleTranslation' ],
 	supports: {
 		html: false,
 		inserter: false,
 		renaming: false,
 		interactivity: false,
 	},
-	edit: ( { attributes } ) => {
+	edit: ( { attributes, clientId, context } ) => {
+		const { language } = attributes;
+		const useAsTitleTranslation = !! context[ 'doubleur/useAsTitleTranslation' ];
+		const defaultLocale         = useDefaultLocale();
+		const isDefaultLocale       = language === defaultLocale;
+		const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+
+		const innerBlocks = useSelect(
+			( select ) => select( 'core/block-editor' ).getBlocks( clientId ),
+			[ clientId ]
+		);
+
+		// While this instance is used to translate the title, make sure it
+		// only ever contains a single level 1 Heading block, and nothing else.
+		useEffect( () => {
+			if ( ! useAsTitleTranslation || isDefaultLocale ) {
+				return;
+			}
+
+			const hasOnlyTitleHeading = innerBlocks.length === 1
+				&& innerBlocks[ 0 ].name === 'core/heading'
+				&& 1 === innerBlocks[ 0 ].attributes.level;
+
+			if ( ! hasOnlyTitleHeading ) {
+				replaceInnerBlocks(
+					clientId,
+					[ createBlock( 'core/heading', { level: 1 } ) ],
+					false
+				);
+			}
+		}, [ useAsTitleTranslation, isDefaultLocale, innerBlocks ] );
+
 		const blockProps = useBlockProps( {
-			className: 'doubleur-lang-' + attributes.language,
+			className: 'doubleur-lang-' + language,
 		} );
+
+		// The site's default locale already has its title set through the
+		// Post/Page title field: hide this instance while in this mode so
+		// only the translated version(s) remain visible.
+		if ( useAsTitleTranslation && isDefaultLocale ) {
+			return (
+				<div { ...blockProps } className={ blockProps.className + ' doubleur-title-translation-hidden' } />
+			);
+		}
 
 		return (
 			<div { ...blockProps }>
-				<InnerBlocks templateLock={ false } />
+				<InnerBlocks
+					templateLock={ useAsTitleTranslation ? 'all' : false }
+					template={ useAsTitleTranslation ? [ [ 'core/heading', { level: 1 } ] ] : undefined }
+					allowedBlocks={ useAsTitleTranslation ? [ 'core/heading' ] : undefined }
+				/>
 			</div>
 		)
 	},
@@ -83,15 +172,43 @@ registerBlockType( 'imath/doublage', {
 
 // Register the main doubleur block.
 registerBlockType( metadata, {
-	edit: () => {
+	edit: ( { attributes, setAttributes, clientId } ) => {
 		const blockProps = useBlockProps();
 		const languages = getAvailableLanguages();
+		const { useAsTitleTranslation } = attributes;
+		const otherTitleTranslationBlocks = useOtherTitleTranslationBlocks( clientId );
+		const isDisabledByAnotherBlock = ! useAsTitleTranslation && otherTitleTranslationBlocks.length > 0;
+
+		const toggleTitleTranslation = ( value ) => {
+			setAttributes( { useAsTitleTranslation: value } );
+		};
+
+		const inspectorControls = (
+			<InspectorControls>
+				<PanelBody title={ __( 'Title translation', 'doubleur' ) }>
+					<ToggleControl
+						label={ __( 'Use this block to translate the title', 'doubleur' ) }
+						help={
+							isDisabledByAnotherBlock
+								? __( 'A Dubber block is already set to translate the title.', 'doubleur' )
+								: __( 'Only one Dubber block per post can be used to translate the title.', 'doubleur' )
+						}
+						checked={ !! useAsTitleTranslation }
+						disabled={ isDisabledByAnotherBlock }
+						onChange={ toggleTitleTranslation }
+					/>
+				</PanelBody>
+			</InspectorControls>
+		);
 
 		if ( ! languages ) {
 			return (
-				<div { ...blockProps }>
-					<p>{ __( 'This block is only available when editing a Post or a Page.', 'doubleur' ) }</p>
-				</div>
+				<>
+					{ inspectorControls }
+					<div { ...blockProps }>
+						<p>{ __( 'This block is only available when editing a Post or a Page.', 'doubleur' ) }</p>
+					</div>
+				</>
 			);
 		}
 
@@ -102,12 +219,15 @@ registerBlockType( metadata, {
 		} );
 
 		return (
-			<section { ...blockProps }>
-				<InnerBlocks
-					template={ template }
-					templateLock="all"
-				/>
-			</section>
+			<>
+				{ inspectorControls }
+				<section { ...blockProps }>
+					<InnerBlocks
+						template={ template }
+						templateLock="all"
+					/>
+				</section>
+			</>
 		);
 	},
 	save: () => {

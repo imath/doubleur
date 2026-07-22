@@ -13,6 +13,15 @@
   ],
   "textdomain": "doubleur",
   "version": "1.0.0",
+  "attributes": {
+    "useAsTitleTranslation": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "providesContext": {
+    "doubleur/useAsTitleTranslation": "useAsTitleTranslation"
+  },
   "allowedBlocks": [
     "imath/doublage"
   ],
