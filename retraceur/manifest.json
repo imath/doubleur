@@ -1,0 +1,14 @@
+{
+	"$schema": "https://raw.githubusercontent.com/retraceur/ressources/refs/heads/main/schemas/retraceur-manifest.json",
+	"name": "imath/doubleur",
+	"type": "block",
+	"requires": {
+		"retraceur": "3.2.0",
+		"php": "7.4",
+		"dependencies": []
+	},
+	"author": {
+		"name": "imath",
+		"url": "https://imathi.eu"
+	}
+}

@@ -1,6 +1,6 @@
 {
   "name": "doubleur",
-  "version": "1.3.0-alpha",
+  "version": "1.3.0-beta1",
   "description": "A Retraceur Block to dub the post or page content in english.",
   "main": "index.js",
   "scripts": {

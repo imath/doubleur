@@ -7,9 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+
+## [1.3.0-beta1] - 2026-07-23
+
 ### Added
 
 - English dubbing functionality for article and page titles.
+
+### Changed
+
+- Bump Retraceur requirement to 3.2.0.
+- Bump PHP requirement to 7.4..
+
 
 ## [1.2.0] - 2025-03-15
 
