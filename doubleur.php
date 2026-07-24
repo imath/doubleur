@@ -12,7 +12,7 @@
  * Plugin URI:         https://github.com/imath/doubleur
  * Plugin Type:        block
  * Description:        Authors can use this block to dub the post or page content in english.
- * Version:            1.3.0-beta1
+ * Version:            1.3.0
  * Author:             imath
  * Author URI:         https://imathi.eu
  * Requires Retraceur: 3.2.0

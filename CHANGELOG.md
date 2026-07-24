@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
-## [1.3.0-beta1] - 2026-07-23
+## [1.3.0] - 2026-07-24
 
 ### Added
 
@@ -17,7 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Bump Retraceur requirement to 3.2.0.
-- Bump PHP requirement to 7.4..
+- Bump PHP requirement to 7.4.
+
+
+## [1.3.0-beta1] - 2026-07-23
 
 
 ## [1.2.0] - 2025-03-15
