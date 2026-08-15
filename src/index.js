@@ -13,6 +13,7 @@ import {
 	useBlockProps,
 	InnerBlocks,
 	InspectorControls,
+	BlockPreview,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -37,7 +38,7 @@ const getAvailableLanguages = () => {
 	const languages = useSelect( ( select ) => {
 		const { doubleur } = select( 'core/editor' ).getEditorSettings();
 
-		return doubleur.allLocales || [];
+		return doubleur?.allLocales || [];
 	}, [] );
 
 	return languages;
@@ -56,6 +57,23 @@ const useDefaultLocale = () => {
 		const { doubleur } = select( 'core/editor' ).getEditorSettings();
 
 		return doubleur.currentLocale || '';
+	}, [] );
+}
+
+/**
+ * Tells whether the block is being rendered inside the Site Editor (eg. while
+ * previewing an example post through a Template), as opposed to a genuine
+ * Post/Page editing screen.
+ *
+ * @since 1.4.0
+ *
+ * @return {boolean} True when rendered inside the Site Editor.
+ */
+const useIsSiteEditor = () => {
+	return useSelect( ( select ) => {
+		const { doubleur } = select( 'core/editor' ).getEditorSettings();
+
+		return !! doubleur?.isSiteEditor;
 	}, [] );
 }
 
@@ -107,8 +125,8 @@ registerBlockType( 'imath/doublage', {
 	edit: ( { attributes, clientId, context } ) => {
 		const { language } = attributes;
 		const useAsTitleTranslation = !! context[ 'doubleur/useAsTitleTranslation' ];
-		const defaultLocale         = useDefaultLocale();
-		const isDefaultLocale       = language === defaultLocale;
+		const defaultLocale = useDefaultLocale();
+		const isDefaultLocale = language === defaultLocale;
 		const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
 		const innerBlocks = useSelect(
@@ -175,9 +193,41 @@ registerBlockType( metadata, {
 	edit: ( { attributes, setAttributes, clientId } ) => {
 		const blockProps = useBlockProps();
 		const languages = getAvailableLanguages();
+		const defaultLocale = useDefaultLocale();
+		const isSiteEditor = useIsSiteEditor();
 		const { useAsTitleTranslation } = attributes;
 		const otherTitleTranslationBlocks = useOtherTitleTranslationBlocks( clientId );
 		const isDisabledByAnotherBlock = ! useAsTitleTranslation && otherTitleTranslationBlocks.length > 0;
+
+		const innerBlocks = useSelect(
+			( select ) => select( 'core/block-editor' ).getBlocks( clientId ),
+			[ clientId ]
+		);
+
+		/*
+		 * The Site Editor only ever shows a preview of an example Post/Page
+		 * (eg. while editing a Template): mirror what the front-end would
+		 * output rather than the multilingual authoring UI. A block flagged
+		 * as the title translation renders nothing on the front-end, and a
+		 * read-only preview of the default locale's content is shown otherwise.
+		 */
+		if ( isSiteEditor ) {
+			if ( useAsTitleTranslation ) {
+				return null;
+			}
+
+			const defaultLocaleBlock = innerBlocks.find(
+				( block ) => block.attributes.language === defaultLocale
+			);
+
+			return (
+				<div { ...blockProps }>
+					{ defaultLocaleBlock && (
+						<BlockPreview blocks={ defaultLocaleBlock.innerBlocks } viewportWidth={ 0 } />
+					) }
+				</div>
+			);
+		}
 
 		const toggleTitleTranslation = ( value ) => {
 			setAttributes( { useAsTitleTranslation: value } );
