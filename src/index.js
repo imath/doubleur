@@ -8,16 +8,19 @@
 /**
  * WP dependencies.
  */
-import { registerBlockType, createBlock } from '@wordpress/blocks';
+import {
+	registerBlockType,
+	createBlock,
+	serialize,
+} from '@wordpress/blocks';
 import {
 	useBlockProps,
 	InnerBlocks,
 	InspectorControls,
-	BlockPreview,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, RawHTML } from '@wordpress/element';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 
 /**
@@ -220,11 +223,13 @@ registerBlockType( metadata, {
 				( block ) => block.attributes.language === defaultLocale
 			);
 
+			if ( ! defaultLocaleBlock || ! defaultLocaleBlock.innerBlocks.length ) {
+				return null;
+			}
+
 			return (
 				<div { ...blockProps }>
-					{ defaultLocaleBlock && (
-						<BlockPreview blocks={ defaultLocaleBlock.innerBlocks } viewportWidth={ 0 } />
-					) }
+					<RawHTML>{ serialize( defaultLocaleBlock.innerBlocks ) }</RawHTML>
 				</div>
 			);
 		}
