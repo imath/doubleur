@@ -194,12 +194,16 @@ function doubleur_get_translated_link( $link = '', $locale = '' ) {
  * @return array The block editor settings.
  */
 function doubleur_block_editor_settings( $settings, $context ) {
-	if ( ! empty( $context->post ) ) {
-		$settings['doubleur'] = array(
-			'allLocales'    => doubleur_get_languages(),
-			'currentLocale' => strtolower( str_replace( '_', '-', get_locale() ) ),
-		);
-	}
+	/*
+	 * This data doesn't depend on a Post being edited: always expose it,
+	 * otherwise the block errors out in contexts without a post (eg. the
+	 * Site Editor), see https://github.com/imath/doubleur/issues/7.
+	 */
+	$settings['doubleur'] = array(
+		'allLocales'    => doubleur_get_languages(),
+		'currentLocale' => strtolower( str_replace( '_', '-', get_locale() ) ),
+		'isSiteEditor'  => ! empty( $context->name ) && 'core/edit-site' === $context->name,
+	);
 
 	return $settings;
 }
