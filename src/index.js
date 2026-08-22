@@ -24,7 +24,7 @@ import { useEffect, RawHTML } from '@wordpress/element';
 import {
 	Notice,
 	PanelBody,
-	ToggleControl
+	ToggleControl,
 } from '@wordpress/components';
 
 /**
