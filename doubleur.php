@@ -222,6 +222,10 @@ function doubleur_render_language_switcher( $content = '' ) {
 		$site_locale   = get_locale();
 		$locale_in_use = doubleur_get_locale();
 
+		if ( ! $locales || 1 === count( $locales ) ) {
+			return $content;
+		}
+
 		if ( ! $locale_in_use ) {
 			$locale_in_use = $site_locale;
 		}
