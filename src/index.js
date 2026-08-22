@@ -264,7 +264,7 @@ registerBlockType( metadata, {
 			return (
 				<>
 					<div { ...blockProps }>
-						<Notice status="error" isDismissible={ false} >
+						<Notice status="error" isDismissible={ false } >
 							<p>{ __( 'This block is made to dub content in another language, no other language were found.', 'doubleur' ) }</p>
 						</Notice>
 					</div>
