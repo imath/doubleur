@@ -21,7 +21,11 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, RawHTML } from '@wordpress/element';
-import { PanelBody, ToggleControl } from '@wordpress/components';
+import {
+	Notice,
+	PanelBody,
+	ToggleControl,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies.
@@ -256,12 +260,13 @@ registerBlockType( metadata, {
 			</InspectorControls>
 		);
 
-		if ( ! languages ) {
+		if ( ! languages.length ) {
 			return (
 				<>
-					{ inspectorControls }
 					<div { ...blockProps }>
-						<p>{ __( 'This block is only available when editing a Post or a Page.', 'doubleur' ) }</p>
+						<Notice status="error" isDismissible={ false } >
+							<p>{ __( 'This block is made to dub content in another language, no other language were found.', 'doubleur' ) }</p>
+						</Notice>
 					</div>
 				</>
 			);
